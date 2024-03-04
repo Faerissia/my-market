@@ -67,6 +67,24 @@ const apiData = {
       }
     });
   },
+  async editProfile(token: any, body: any) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const api: any = await axios.post(
+          `http://localhost:8081/user/edit-profile`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return resolve(api?.data?.data);
+      } catch (err: any) {
+        return resolve(err?.response?.data);
+      }
+    });
+  },
 };
 
 export default { ...apiData };

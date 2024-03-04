@@ -14,9 +14,10 @@ const profilePage = () => {
     email: "",
     picture: null,
   });
-
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const token = sessionStorage.getItem("token");
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
     const fetchData = async () => {
       try {
         const profile: any = await accountService.getProfile(token);
@@ -59,7 +60,19 @@ const profilePage = () => {
 
   const handleEditProfile = async (e: any) => {
     e.preventDefault();
-    console.log(formData);
+    const edit_profile: any = await accountService.editProfile(token, formData);
+    console.log(edit_profile);
+    if (edit_profile.message) {
+      setErrorMessage(edit_profile.message);
+      return;
+    }
+    if (edit_profile.results) {
+      setSuccessMessage("update profile successfully!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } else {
+    }
   };
 
   return (
@@ -90,6 +103,12 @@ const profilePage = () => {
           onChange={handleChange}
           className="py-2"
         />
+        {errorMessage && (
+          <p className="text-red-500 text-center">{errorMessage}</p>
+        )}
+        {successMessage && (
+          <p className="text-green-500 text-center">{successMessage}</p>
+        )}
       </div>
       <div className="mb-4">
         <form onSubmit={handleEditProfile} className="max-w-md mx-auto">
@@ -113,7 +132,7 @@ const profilePage = () => {
             <input
               type="text"
               id="firstName"
-              name="firstName"
+              name="first_name"
               value={formData.first_name}
               onChange={handleChange}
               className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 text-black"
@@ -126,7 +145,7 @@ const profilePage = () => {
             <input
               type="text"
               id="firstName"
-              name="firstName"
+              name="last_name"
               value={formData.last_name}
               onChange={handleChange}
               className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 text-black"
@@ -137,9 +156,9 @@ const profilePage = () => {
               Phone number
             </label>
             <input
-              type="text"
+              type="phone"
               id="firstName"
-              name="firstName"
+              name="phone"
               value={formData.phone}
               onChange={handleChange}
               className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 text-black"
